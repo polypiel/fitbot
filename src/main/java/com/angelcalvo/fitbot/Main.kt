@@ -7,13 +7,8 @@ import java.io.InputStream
 import java.util.Properties
 
 fun main(args: Array<String>) {
-    val SECRETS_FILE = "/telegram.properties"
-    val inStream: InputStream = GoogleSheetsHandler::class.java.getResourceAsStream(SECRETS_FILE)
-    val props = Properties()
-    props.load(inStream)
-    inStream.close()
-    val token = System.getenv("TG_TOKEN") ?: props["token"] as String
-    val creatorId = (System.getenv("TG_CREATOR_ID") ?: props["creatorId"] as String).toInt()
+    val token = System.getenv("TG_TOKEN")
+    val creatorId = System.getenv("TG_CREATOR_ID").toInt()
 
     ApiContextInitializer.init()
     val telegramBotsApi = TelegramBotsApi()
