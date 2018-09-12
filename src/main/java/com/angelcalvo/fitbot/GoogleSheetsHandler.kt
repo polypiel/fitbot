@@ -16,11 +16,10 @@ import org.glassfish.jersey.server.ServerProperties.APPLICATION_NAME
 import com.google.api.services.sheets.v4.Sheets
 
 
-
 class GoogleSheetsHandler {
     fun current(userId: Int): String {
-        val HTTP_TRANSPORT: NetHttpTransport  = GoogleNetHttpTransport.newTrustedTransport()
-        val service = Sheets.Builder(HTTP_TRANSPORT, JSON_FACTORY, getCredentials(HTTP_TRANSPORT))
+        val httpTransport: NetHttpTransport  = GoogleNetHttpTransport.newTrustedTransport()
+        val service = Sheets.Builder(httpTransport, JSON_FACTORY, getCredentials(httpTransport))
             .setApplicationName(APPLICATION_NAME)
             .build()
         val userName = USER_MAPPING[userId]
@@ -34,23 +33,15 @@ class GoogleSheetsHandler {
             "No data found :("
         } else {
             "Current $userName's data (${values[1][0]}):\n" +
-            (1..11)
-                .map {  "*${HEADERS[it]}*: ${values[1].getOrNull(it) ?: ""} (${values[0].getOrNull(it) ?: ""})" }
-                .joinToString("\n" )
+                    (1..11).joinToString("\n") {
+                        "*${HEADERS[it]}*: ${values[1].getOrNull(it) ?: ""} (${values[0].getOrNull(it) ?: ""})"
+                    }
         }
 
     }
 
     fun chart(): String {
-        val HTTP_TRANSPORT: NetHttpTransport  = GoogleNetHttpTransport.newTrustedTransport()
-        val service = Sheets.Builder(HTTP_TRANSPORT, JSON_FACTORY, getCredentials(HTTP_TRANSPORT))
-            .setApplicationName(APPLICATION_NAME)
-            .build()
-        val range = "Oliver!A5:L5"
-
-        val response = service.spreadsheets()
-            .get(SHEET_ID)
-            .execute()
+        // TODO
         return "Not implemented yet"
 
     }
@@ -65,13 +56,13 @@ class GoogleSheetsHandler {
                 HTTP_TRANSPORT, JSON_FACTORY, clientSecrets, SCOPES)
                 .setDataStoreFactory(FileDataStoreFactory(java.io.File(TOKENS_DIRECTORY_PATH)))
                 .setAccessType("offline")
-                .build();
-        return AuthorizationCodeInstalledApp(flow, LocalServerReceiver()).authorize("user");
+                .build()
+        return AuthorizationCodeInstalledApp(flow, LocalServerReceiver()).authorize("user")
     }
 
     companion object {
         const val CREDENTIALS_FILE_PATH = "/credentials.json"
-        val JSON_FACTORY = JacksonFactory.getDefaultInstance()
+        val JSON_FACTORY: JacksonFactory = JacksonFactory.getDefaultInstance()
         val SCOPES = listOf(SheetsScopes.SPREADSHEETS_READONLY)
         const val TOKENS_DIRECTORY_PATH = "tokens"
         const val SHEET_ID = "1Nb83F26KpRc-1T28_qgan7ryHe-2v-eWIGTRCWuj7iA"
