@@ -12,8 +12,8 @@ fun main(args: Array<String>) {
     val props = Properties()
     props.load(inStream)
     inStream.close()
-    val token = props["token"] as String
-    val creatorId = (props["creatorId"] as String).toInt()
+    val token = System.getenv("TG_TOKEN") ?: props["token"] as String
+    val creatorId = (System.getenv("TG_CREATOR_ID") ?: props["creatorId"] as String).toInt()
 
     ApiContextInitializer.init()
     val telegramBotsApi = TelegramBotsApi()
