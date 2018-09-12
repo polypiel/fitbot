@@ -6,10 +6,9 @@ import org.telegram.abilitybots.api.objects.Locality
 import org.telegram.abilitybots.api.objects.Privacy
 
 
-class FitBot: AbilityBot(
-    "xxx", "fitbot"
-) {
-    override fun creatorId(): Int = 0
+class FitBot(private val token: String, private val creatorId: Int): AbilityBot(token, "fitbot") {
+
+    override fun creatorId(): Int = creatorId
 
     fun log(): Ability =
         Ability
