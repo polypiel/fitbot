@@ -19,9 +19,12 @@ import java.io.StringReader
 class GoogleSheetsHandler(private val credentialsJson: String) {
 
     fun current(userId: Int): String {
+        if (!USER_MAPPING.containsKey(userId)) {
+            return "User not reconized, please contact the admin"
+        }
         val credentials: GoogleCredential = GoogleCredential
             .fromStream(credentialsJson.byteInputStream())
-            .createScoped(listOf("https://www.googleapis.com/auth/spreadsheets"))
+            .createScoped(SCOPES)
 
         val httpTransport: NetHttpTransport = GoogleNetHttpTransport.newTrustedTransport()
         val service = Sheets.Builder(httpTransport, JSON_FACTORY, credentials)
@@ -51,30 +54,15 @@ class GoogleSheetsHandler(private val credentialsJson: String) {
 
     }
 
-    private fun getCredentials(httpTransport: NetHttpTransport): Credential {
-        // Load client secrets.
-        val clientSecrets: GoogleClientSecrets = GoogleClientSecrets.load(JSON_FACTORY, StringReader(credentialsJson))
-
-        // Build flow and trigger user authorization request.
-        val flow: GoogleAuthorizationCodeFlow = GoogleAuthorizationCodeFlow.Builder(
-                httpTransport, JSON_FACTORY, clientSecrets, SCOPES)
-                .setDataStoreFactory(FileDataStoreFactory(java.io.File(TOKENS_DIRECTORY_PATH)))
-                .setAccessType("offline")
-                .build()
-        return AuthorizationCodeInstalledApp(flow, LocalServerReceiver()).authorize("user")
-    }
-
-
     companion object {
         val JSON_FACTORY: JacksonFactory = JacksonFactory.getDefaultInstance()
         val SCOPES = listOf(SheetsScopes.SPREADSHEETS_READONLY)
-        const val TOKENS_DIRECTORY_PATH = "tokens"
         const val SHEET_ID = "1Nb83F26KpRc-1T28_qgan7ryHe-2v-eWIGTRCWuj7iA"
         val HEADERS = listOf("Fecha", "Peso", "Cintura", "Hombro", "Bicep izq", "Bicep der", "Muslo", "Pantorrilla",
             "Pecho", "Cuello", "Grasa", "FFMI")
         //val UK_FFMI_ID = 1957195779
         //val ES_FFMI_ID = 1911419640
-        val USER_MAPPING = mapOf(222426316 to "Angel", 224363059 to "Oliver", 14708999 to "Luis")
+        val USER_MAPPING = mapOf(222426316 to "Angel", 224363059 to "Oliver", 14708999 to "Luis", 215774109 to "hg")
 
     }
 }
