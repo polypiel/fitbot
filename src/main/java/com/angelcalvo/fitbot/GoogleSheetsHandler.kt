@@ -9,14 +9,14 @@ import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport
 import com.google.api.client.http.javanet.NetHttpTransport
 import com.google.api.client.json.jackson2.JacksonFactory
 import com.google.api.client.util.store.FileDataStoreFactory
-import com.google.api.services.sheets.v4.SheetsScopes
-import java.io.InputStream
-import java.io.InputStreamReader
-import org.glassfish.jersey.server.ServerProperties.APPLICATION_NAME
 import com.google.api.services.sheets.v4.Sheets
+import com.google.api.services.sheets.v4.SheetsScopes
+import org.glassfish.jersey.server.ServerProperties.APPLICATION_NAME
+import java.io.StringReader
 
 
-class GoogleSheetsHandler {
+class GoogleSheetsHandler(private val credentials: String) {
+
     fun current(userId: Int): String {
         val httpTransport: NetHttpTransport  = GoogleNetHttpTransport.newTrustedTransport()
         val service = Sheets.Builder(httpTransport, JSON_FACTORY, getCredentials(httpTransport))
@@ -48,8 +48,7 @@ class GoogleSheetsHandler {
 
     private fun getCredentials(HTTP_TRANSPORT: NetHttpTransport): Credential {
         // Load client secrets.
-        val inStream: InputStream  = GoogleSheetsHandler::class.java.getResourceAsStream(CREDENTIALS_FILE_PATH)
-        val clientSecrets: GoogleClientSecrets = GoogleClientSecrets.load(JSON_FACTORY, InputStreamReader(inStream))
+        val clientSecrets: GoogleClientSecrets = GoogleClientSecrets.load(JSON_FACTORY, StringReader(credentials))
 
         // Build flow and trigger user authorization request.
         val flow: GoogleAuthorizationCodeFlow = GoogleAuthorizationCodeFlow.Builder(
@@ -61,15 +60,14 @@ class GoogleSheetsHandler {
     }
 
     companion object {
-        const val CREDENTIALS_FILE_PATH = "/credentials.json"
         val JSON_FACTORY: JacksonFactory = JacksonFactory.getDefaultInstance()
         val SCOPES = listOf(SheetsScopes.SPREADSHEETS_READONLY)
         const val TOKENS_DIRECTORY_PATH = "tokens"
         const val SHEET_ID = "1Nb83F26KpRc-1T28_qgan7ryHe-2v-eWIGTRCWuj7iA"
         val HEADERS = listOf("Fecha", "Peso", "Cintura", "Hombro", "Bicep izq", "Bicep der", "Muslo", "Pantorrilla",
             "Pecho", "Cuello", "Grasa", "FFMI")
-        val UK_FFMI_ID = 1957195779
-        val ES_FFMI_ID = 1911419640
+        //val UK_FFMI_ID = 1957195779
+        //val ES_FFMI_ID = 1911419640
         val USER_MAPPING = mapOf(222426316 to "Angel", 224363059 to "Oliver", 14708999 to "Luis")
 
     }

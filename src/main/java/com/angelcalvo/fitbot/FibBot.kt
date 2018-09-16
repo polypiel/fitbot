@@ -6,7 +6,11 @@ import org.telegram.abilitybots.api.objects.Locality
 import org.telegram.abilitybots.api.objects.Privacy
 
 
-class FitBot(private val token: String, private val creatorId: Int): AbilityBot(token, "fitbot") {
+class FitBot(
+    token: String,
+    private val creatorId: Int,
+    private val googleCredentials: String
+): AbilityBot(token, "fitbot") {
 
     override fun creatorId(): Int = creatorId
 
@@ -41,10 +45,10 @@ class FitBot(private val token: String, private val creatorId: Int): AbilityBot(
             .build()
 
     private fun doChart(): String {
-        return GoogleSheetsHandler().chart()
+        return GoogleSheetsHandler(googleCredentials).chart()
     }
 
     private fun doCurrent(userId: Int): String {
-        return GoogleSheetsHandler().current(userId)
+        return GoogleSheetsHandler(googleCredentials).current(userId)
     }
 }
