@@ -5,6 +5,7 @@ import com.google.api.client.extensions.java6.auth.oauth2.AuthorizationCodeInsta
 import com.google.api.client.extensions.jetty.auth.oauth2.LocalServerReceiver
 import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeFlow
 import com.google.api.client.googleapis.auth.oauth2.GoogleClientSecrets
+import com.google.api.client.googleapis.auth.oauth2.GoogleCredential
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport
 import com.google.api.client.http.javanet.NetHttpTransport
 import com.google.api.client.json.jackson2.JacksonFactory
@@ -15,11 +16,15 @@ import org.glassfish.jersey.server.ServerProperties.APPLICATION_NAME
 import java.io.StringReader
 
 
-class GoogleSheetsHandler(private val credentials: String) {
+class GoogleSheetsHandler(private val credentialsJson: String) {
 
     fun current(userId: Int): String {
-        val httpTransport: NetHttpTransport  = GoogleNetHttpTransport.newTrustedTransport()
-        val service = Sheets.Builder(httpTransport, JSON_FACTORY, getCredentials(httpTransport))
+        val credentials: GoogleCredential = GoogleCredential
+            .fromStream(credentialsJson.byteInputStream())
+            .createScoped(listOf("https://www.googleapis.com/auth/spreadsheets"))
+
+        val httpTransport: NetHttpTransport = GoogleNetHttpTransport.newTrustedTransport()
+        val service = Sheets.Builder(httpTransport, JSON_FACTORY, credentials)
             .setApplicationName(APPLICATION_NAME)
             .build()
         val userName = USER_MAPPING[userId]
@@ -46,18 +51,19 @@ class GoogleSheetsHandler(private val credentials: String) {
 
     }
 
-    private fun getCredentials(HTTP_TRANSPORT: NetHttpTransport): Credential {
+    private fun getCredentials(httpTransport: NetHttpTransport): Credential {
         // Load client secrets.
-        val clientSecrets: GoogleClientSecrets = GoogleClientSecrets.load(JSON_FACTORY, StringReader(credentials))
+        val clientSecrets: GoogleClientSecrets = GoogleClientSecrets.load(JSON_FACTORY, StringReader(credentialsJson))
 
         // Build flow and trigger user authorization request.
         val flow: GoogleAuthorizationCodeFlow = GoogleAuthorizationCodeFlow.Builder(
-                HTTP_TRANSPORT, JSON_FACTORY, clientSecrets, SCOPES)
+                httpTransport, JSON_FACTORY, clientSecrets, SCOPES)
                 .setDataStoreFactory(FileDataStoreFactory(java.io.File(TOKENS_DIRECTORY_PATH)))
                 .setAccessType("offline")
                 .build()
         return AuthorizationCodeInstalledApp(flow, LocalServerReceiver()).authorize("user")
     }
+
 
     companion object {
         val JSON_FACTORY: JacksonFactory = JacksonFactory.getDefaultInstance()
