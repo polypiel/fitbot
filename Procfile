@@ -1,1 +1,1 @@
-web: java $JAVA_OPTS -cp target/classes:target/dependency/* com.angelcalvo.fitbot.MainKt
+web: java -Dserver.port=$PORT $JAVA_OPTS -cp target/classes:target/dependency/* com.angelcalvo.fitbot.MainKt
