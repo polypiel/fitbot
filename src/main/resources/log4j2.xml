@@ -9,6 +9,6 @@
 		<Root level="error">
 			<AppenderRef ref="Console" />
 		</Root>
-		<Logger name="com.tuenti.acalvo" level="debug"/>
+		<Logger name="com.angelcalvo.fitbot" level="debug"/>
 	</Loggers>
 </Configuration>
