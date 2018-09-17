@@ -7,15 +7,15 @@ import spark.Spark.get
 import spark.Spark.port
 import kotlin.concurrent.thread
 
+
 fun main(args: Array<String>) {
     thread {
         initBot()
     }
 
-    println("Starting web server...")
     port(getHerokuAssignedPort())
     get("/") { req, res ->
-        "Hello World"
+        "hello"
     }
 }
 

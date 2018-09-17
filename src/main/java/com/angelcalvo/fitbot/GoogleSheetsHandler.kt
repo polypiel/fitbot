@@ -39,7 +39,6 @@ class GoogleSheetsHandler(private val credentialsJson: String) {
                         "*${HEADERS[it]}*: ${values[1].getOrNull(it) ?: ""} (${values[0].getOrNull(it) ?: ""})"
                     }
         }
-
     }
 
     fun chart(): String {
