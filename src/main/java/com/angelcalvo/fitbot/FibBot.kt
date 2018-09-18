@@ -15,8 +15,7 @@ class FitBot(
     override fun creatorId(): Int = creatorId
 
     fun log(): Ability =
-        Ability
-            .builder()
+        Ability.builder()
             .name("log")
             .info("Adds metrics")
             .locality(Locality.ALL)
@@ -24,19 +23,17 @@ class FitBot(
             .action { ctx -> silent.send("Hello world!", ctx.chatId()!!) }
             .build()
 
-    fun chart(): Ability =
-        Ability
-            .builder()
-            .name("chart")
-            .info("Shows the chart")
+    fun summary(): Ability =
+        Ability.builder()
+            .name("summary")
+            .info("Shows summary info")
             .locality(Locality.ALL)
             .privacy(Privacy.PUBLIC)
-            .action { ctx -> silent.send(doChart(), ctx.chatId()!!)  }
+            .action { ctx -> silent.send(doSummary(), ctx.chatId()!!) }
             .build()
 
     fun current(): Ability =
-        Ability
-            .builder()
+        Ability.builder()
             .name("current")
             .info("Shows current measures of an user")
             .locality(Locality.ALL)
@@ -44,11 +41,12 @@ class FitBot(
             .action { ctx -> silent.sendMd(doCurrent(ctx.user().id), ctx.chatId()!!)  }
             .build()
 
-    private fun doChart(): String {
-        return GoogleSheetsHandler(googleCredentials).chart()
-    }
 
     private fun doCurrent(userId: Int): String {
         return GoogleSheetsHandler(googleCredentials).current(userId)
+    }
+
+    private fun doSummary(): String {
+        return GoogleSheetsHandler(googleCredentials).summary()
     }
 }

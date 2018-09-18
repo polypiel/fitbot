@@ -16,18 +16,10 @@ class GoogleSheetsHandler(private val credentialsJson: String) {
             return "User not recognized, please contact the admin"
         }
 
-        val credentials: GoogleCredential = GoogleCredential
-            .fromStream(credentialsJson.byteInputStream())
-            .createScoped(SCOPES)
-
-        val httpTransport: NetHttpTransport = GoogleNetHttpTransport.newTrustedTransport()
-        val service = Sheets.Builder(httpTransport, JSON_FACTORY, credentials)
-            .setApplicationName(APPLICATION_NAME)
-            .build()
         val userName = USER_MAPPING[userId]
         val range = "$userName!A115:L116"
 
-        val response = service.spreadsheets().values()
+        val response = sheets().spreadsheets().values()
             .get(SHEET_ID, range)
             .execute()
         val values = response.getValues()
@@ -36,15 +28,36 @@ class GoogleSheetsHandler(private val credentialsJson: String) {
         } else {
             "Current $userName's data (${values[1][0]}):\n" +
                     (1..11).joinToString("\n") {
-                        "*${HEADERS[it]}*: ${values[1].getOrNull(it) ?: ""} (${values[0].getOrNull(it) ?: ""})"
+                        " * *${HEADERS[it]}*: ${values[1].getOrNull(it) ?: ""} (${values[0].getOrNull(it) ?: ""})"
                     }
         }
     }
 
-    fun chart(): String {
-        // TODO
-        return "Not implemented yet"
 
+    fun summary(): String {
+        val response = sheets().spreadsheets().values()
+            .batchGet(SHEET_ID)
+            .setRanges(USER_MAPPING.values.map { "$it!K116:L116" })
+            .execute()
+        val values = response.valueRanges
+            .map { it.getValues() }
+            .zip(USER_MAPPING.values)
+            .filter { it.first != null }
+            .map { Pair(it.second, it.first.flatten()) }
+        return "Summary:\n" +
+                values.joinToString("\n") { " * *${it.first}*: ${it.second[0]} fat, ${it.second[1]} FFMI" }
+    }
+
+    private fun sheets(): Sheets {
+        val credentials: GoogleCredential = GoogleCredential
+            .fromStream(credentialsJson.byteInputStream())
+            .createScoped(SCOPES)
+
+        val httpTransport: NetHttpTransport = GoogleNetHttpTransport.newTrustedTransport()
+        val service = Sheets.Builder(httpTransport, JSON_FACTORY, credentials)
+            .setApplicationName(APPLICATION_NAME)
+            .build()
+        return service
     }
 
     companion object {
