@@ -20,7 +20,7 @@ class FitBot(
             .info("Adds metrics")
             .locality(Locality.ALL)
             .privacy(Privacy.PUBLIC)
-            .action { ctx -> silent.send("Hello world!", ctx.chatId()!!) }
+            .action { ctx -> silent.sendMd("Hello world!", ctx.chatId()!!) }
             .build()
 
     fun summary(): Ability =
@@ -29,7 +29,7 @@ class FitBot(
             .info("Shows summary info")
             .locality(Locality.ALL)
             .privacy(Privacy.PUBLIC)
-            .action { ctx -> silent.send(doSummary(), ctx.chatId()!!) }
+            .action { ctx -> silent.sendMd(doSummary(), ctx.chatId()!!) }
             .build()
 
     fun current(): Ability =
