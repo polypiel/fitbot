@@ -26,9 +26,9 @@ class GoogleSheetsHandler(private val credentialsJson: String) {
         return if (values == null || values.isEmpty()) {
             "No data found :("
         } else {
-            "Current $userName's data (${values[1][0]}):\n---\n" +
+            "Current $userName's data (${values[1][0]}):\n" +
                     (1..11).joinToString("\n") {
-                        "${HEADERS[it]} | ${values[1].getOrNull(it) ?: ""} (${values[0].getOrNull(it) ?: ""})"
+                        "* *${HEADERS[it]}*: ${values[1].getOrNull(it) ?: ""} (${values[0].getOrNull(it) ?: ""})"
                     }
         }
     }
@@ -44,9 +44,8 @@ class GoogleSheetsHandler(private val credentialsJson: String) {
             .zip(USER_MAPPING.values)
             .filter { it.first != null }
             .map { Pair(it.second, it.first.flatten()) }
-        return "Summary\n---\n" +
-                "| Fat | FFMI" +
-                values.joinToString("\n") { "${it.first} | ${it.second[0]} | ${it.second[1]}" }
+        return "Summary:\n" +
+                values.joinToString("\n") { "* *${it.first}*: ${it.second[0]} fat, ${it.second[1]} FFMI" }
     }
 
     private fun sheets(): Sheets {
