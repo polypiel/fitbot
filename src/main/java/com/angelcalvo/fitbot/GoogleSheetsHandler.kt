@@ -68,7 +68,12 @@ class GoogleSheetsHandler(private val credentialsJson: String) {
             "Pecho", "Cuello", "Grasa", "FFMI")
         //val UK_FFMI_ID = 1957195779
         //val ES_FFMI_ID = 1911419640
-        val USER_MAPPING = mapOf(222426316 to "Angel", 224363059 to "Oliver", 14708999 to "Luis", 215774109 to "hg")
-
+        val USER_MAPPING = mapOf(
+            222426316 to "Angel",
+            224363059 to "Oliver",
+            14708999 to "Luis",
+            215774109 to "hg",
+            198764045 to "Aaron"
+        )
     }
 }
