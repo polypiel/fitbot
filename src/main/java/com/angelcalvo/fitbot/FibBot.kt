@@ -36,8 +36,8 @@ class FitBot(
 
     fun summaryChart(): Ability =
         Ability.builder()
-            .name("summary")
-            .info("Shows summary info")
+            .name("summary2")
+            .info("Plots summary info")
             .locality(Locality.ALL)
             .privacy(Privacy.PUBLIC)
             .action { ctx ->
