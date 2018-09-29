@@ -15,6 +15,7 @@ class ChartHandler {
             .width(400)
             .height(200)
             .theme(Styler.ChartTheme.Matlab)
+            .title("FFMI")
             .build()
         // Customize Chart
         ffmiChart.styler.isLegendVisible = false
