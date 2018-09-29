@@ -33,7 +33,6 @@ class GoogleSheetsHandler(private val credentialsJson: String) {
         }
     }
 
-
     fun summary(): String {
         val response = sheets().spreadsheets().values()
             .batchGet(SHEET_ID)
@@ -46,6 +45,19 @@ class GoogleSheetsHandler(private val credentialsJson: String) {
             .map { Pair(it.second, it.first.flatten()) }
         return "Summary:\n" +
                 values.joinToString("\n") { "*${it.first}*: ${it.second[0]} fat, ${it.second[1]} FFMI" }
+
+    }
+
+    fun summaryChart(): Pair<List<String>, List<Double>> {
+        val response = sheets().spreadsheets().values()
+            .batchGet(SHEET_ID)
+            .setRanges(USER_MAPPING.values.map { "$it!K116:L116" })
+            .execute()
+        val values = response.valueRanges
+            .map { it.getValues()?.getOrNull(0)?.getOrNull(1) ?: "0" }
+            .map { it.toString().toDouble() }
+
+        return Pair(USER_MAPPING.values.toList(), values)
     }
 
     private fun sheets(): Sheets {

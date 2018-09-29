@@ -4,6 +4,8 @@ import org.telegram.abilitybots.api.bot.AbilityBot
 import org.telegram.abilitybots.api.objects.Ability
 import org.telegram.abilitybots.api.objects.Locality
 import org.telegram.abilitybots.api.objects.Privacy
+import org.telegram.telegrambots.meta.api.methods.send.SendPhoto
+import java.nio.file.Path
 
 
 class FitBot(
@@ -29,7 +31,22 @@ class FitBot(
             .info("Shows summary info")
             .locality(Locality.ALL)
             .privacy(Privacy.PUBLIC)
-            .action { ctx -> silent.sendMd(doSummary(), ctx.chatId()!!) }
+            .action { ctx -> silent.sendMd(doSummary(), ctx.chatId()) }
+            .build()
+
+    fun summaryChart(): Ability =
+        Ability.builder()
+            .name("summary")
+            .info("Shows summary info")
+            .locality(Locality.ALL)
+            .privacy(Privacy.PUBLIC)
+            .action { ctx ->
+                val img = doSummaryChart()
+                val photo = SendPhoto().setCaption("Summary")
+                    .setChatId(ctx.chatId())
+                    .setPhoto(img.toFile())
+                sender.sendPhoto(photo)
+            }
             .build()
 
     fun current(): Ability =
@@ -38,7 +55,7 @@ class FitBot(
             .info("Shows current measures of an user")
             .locality(Locality.ALL)
             .privacy(Privacy.PUBLIC)
-            .action { ctx -> silent.sendMd(doCurrent(ctx.user().id), ctx.chatId()!!)  }
+            .action { ctx -> silent.sendMd(doCurrent(ctx.user().id), ctx.chatId())  }
             .build()
 
 
@@ -48,5 +65,11 @@ class FitBot(
 
     private fun doSummary(): String {
         return GoogleSheetsHandler(googleCredentials).summary()
+    }
+
+    // TODO delete img
+    private fun doSummaryChart(): Path {
+        val (names, values) = GoogleSheetsHandler(googleCredentials).summaryChart()
+        return ChartHandler().summaryChart(names, values)
     }
 }

@@ -6,7 +6,7 @@
 
 	<groupId>com.angelcalvo</groupId>
 	<artifactId>fitbot</artifactId>
-	<version>1.0-SNAPSHOT</version>
+	<version>1.1-SNAPSHOT</version>
 
 	<properties>
 		<kotlin.version>1.2.70</kotlin.version>
@@ -74,6 +74,11 @@
 			<groupId>org.apache.logging.log4j</groupId>
 			<artifactId>log4j-slf4j-impl</artifactId>
 			<version>2.11.1</version>
+		</dependency>
+		<dependency>
+			<groupId>org.knowm.xchart</groupId>
+			<artifactId>xchart</artifactId>
+			<version>3.5.2</version>
 		</dependency>
 	</dependencies>
 
