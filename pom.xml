@@ -6,7 +6,7 @@
 
 	<groupId>com.angelcalvo</groupId>
 	<artifactId>fitbot</artifactId>
-	<version>1.0-SNAPSHOT</version>
+	<version>1.1-SNAPSHOT</version>
 
 	<properties>
 		<kotlin.version>1.2.70</kotlin.version>
@@ -75,6 +75,11 @@
 			<artifactId>log4j-slf4j-impl</artifactId>
 			<version>2.11.1</version>
 		</dependency>
+		<dependency>
+			<groupId>org.knowm.xchart</groupId>
+			<artifactId>xchart</artifactId>
+			<version>3.5.2</version>
+		</dependency>
 	</dependencies>
 
 	<build>
@@ -82,6 +87,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.8.0</version>
 				<configuration>
 					<source>1.8</source>
 					<target>1.8</target>
@@ -114,6 +120,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jar-plugin</artifactId>
+				<version>3.0.2</version>
 				<configuration>
 					<archive>
 						<manifest>

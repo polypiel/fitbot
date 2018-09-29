@@ -4,6 +4,9 @@ import org.telegram.abilitybots.api.bot.AbilityBot
 import org.telegram.abilitybots.api.objects.Ability
 import org.telegram.abilitybots.api.objects.Locality
 import org.telegram.abilitybots.api.objects.Privacy
+import org.telegram.telegrambots.meta.api.methods.send.SendPhoto
+import java.io.ByteArrayInputStream
+import java.io.InputStream
 
 
 class FitBot(
@@ -14,22 +17,26 @@ class FitBot(
 
     override fun creatorId(): Int = creatorId
 
-    fun log(): Ability =
-        Ability.builder()
-            .name("log")
-            .info("Adds metrics")
-            .locality(Locality.ALL)
-            .privacy(Privacy.PUBLIC)
-            .action { ctx -> silent.sendMd("Hello world!", ctx.chatId()!!) }
-            .build()
-
     fun summary(): Ability =
         Ability.builder()
             .name("summary")
             .info("Shows summary info")
             .locality(Locality.ALL)
             .privacy(Privacy.PUBLIC)
-            .action { ctx -> silent.sendMd(doSummary(), ctx.chatId()!!) }
+            .action { ctx -> silent.sendMd(doSummary(), ctx.chatId()) }
+            .build()
+
+    fun summaryChart(): Ability =
+        Ability.builder()
+            .name("summary2")
+            .info("Plots summary info")
+            .locality(Locality.ALL)
+            .privacy(Privacy.PUBLIC)
+            .action { ctx ->
+                val (caption, bytes) = doSummaryChart()
+                val photo = SendPhoto().setChatId(ctx.chatId()).setPhoto(ctx.user().userName, bytes)
+                sender.sendPhoto(photo)
+            }
             .build()
 
     fun current(): Ability =
@@ -38,15 +45,40 @@ class FitBot(
             .info("Shows current measures of an user")
             .locality(Locality.ALL)
             .privacy(Privacy.PUBLIC)
-            .action { ctx -> silent.sendMd(doCurrent(ctx.user().id), ctx.chatId()!!)  }
+            .action { ctx -> silent.sendMd(doCurrent(ctx.user().id), ctx.chatId())  }
             .build()
 
+    fun currentChart(): Ability =
+        Ability.builder()
+            .name("current2")
+            .info("Plots current measures of an user")
+            .locality(Locality.ALL)
+            .privacy(Privacy.PUBLIC)
+            .action { ctx ->
+                val (caption, img) = doCurrentChart(ctx.user().id)
+                val photo = SendPhoto().setChatId(ctx.chatId()).setPhoto(ctx.user().userName, img)
+                sender.sendPhoto(photo)
+                silent.sendMd(caption, ctx.chatId())
+            }
+            .build()
 
     private fun doCurrent(userId: Int): String {
         return GoogleSheetsHandler(googleCredentials).current(userId)
     }
 
+    private fun doCurrentChart(userId: Int): Pair<String, InputStream> {
+        val data = GoogleSheetsHandler(googleCredentials).currentChart(userId)
+        val bytes =  ChartHandler().curerntChart(data)
+        return Pair(data.toString(), ByteArrayInputStream(bytes))
+    }
+
     private fun doSummary(): String {
         return GoogleSheetsHandler(googleCredentials).summary()
+    }
+
+    private fun doSummaryChart(): Pair<String, InputStream> {
+        val data = GoogleSheetsHandler(googleCredentials).summaryChart()
+        val bytes =  ChartHandler().summaryChart(data)
+        return Pair("Summary", ByteArrayInputStream(bytes))
     }
 }
