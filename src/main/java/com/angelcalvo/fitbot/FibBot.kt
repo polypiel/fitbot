@@ -17,18 +17,19 @@ class FitBot(
 
     override fun creatorId(): Int = creatorId
 
-    fun summary(): Ability =
+    @Deprecated("Use summary")
+    fun summaryChart(): Ability =
         Ability.builder()
-            .name("summary")
+            .name("summary2")
             .info("Shows summary info")
             .locality(Locality.ALL)
             .privacy(Privacy.PUBLIC)
             .action { ctx -> silent.sendMd(doSummary(), ctx.chatId()) }
             .build()
 
-    fun summaryChart(): Ability =
+    fun summary(): Ability =
         Ability.builder()
-            .name("summary2")
+            .name("summary")
             .info("Plots summary info")
             .locality(Locality.ALL)
             .privacy(Privacy.PUBLIC)
@@ -39,18 +40,19 @@ class FitBot(
             }
             .build()
 
-    fun current(): Ability =
+    @Deprecated("Use current")
+    fun currentChart(): Ability =
         Ability.builder()
-            .name("current")
+            .name("current2")
             .info("Shows current measures of an user")
             .locality(Locality.ALL)
             .privacy(Privacy.PUBLIC)
             .action { ctx -> silent.sendMd(doCurrent(ctx.user().id), ctx.chatId())  }
             .build()
 
-    fun currentChart(): Ability =
+    fun current(): Ability =
         Ability.builder()
-            .name("current2")
+            .name("current")
             .info("Plots current measures of an user")
             .locality(Locality.ALL)
             .privacy(Privacy.PUBLIC)
