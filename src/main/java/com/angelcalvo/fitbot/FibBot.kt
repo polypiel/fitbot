@@ -17,16 +17,6 @@ class FitBot(
 
     override fun creatorId(): Int = creatorId
 
-    @Deprecated("Use summary")
-    fun summaryChart(): Ability =
-        Ability.builder()
-            .name("summary2")
-            .info("Shows summary info")
-            .locality(Locality.ALL)
-            .privacy(Privacy.PUBLIC)
-            .action { ctx -> silent.sendMd(doSummary(), ctx.chatId()) }
-            .build()
-
     fun summary(): Ability =
         Ability.builder()
             .name("summary")
@@ -38,16 +28,6 @@ class FitBot(
                 val photo = SendPhoto().setChatId(ctx.chatId()).setPhoto(ctx.user().userName, bytes)
                 sender.sendPhoto(photo)
             }
-            .build()
-
-    @Deprecated("Use current")
-    fun currentChart(): Ability =
-        Ability.builder()
-            .name("current2")
-            .info("Shows current measures of an user")
-            .locality(Locality.ALL)
-            .privacy(Privacy.PUBLIC)
-            .action { ctx -> silent.sendMd(doCurrent(ctx.user().id), ctx.chatId())  }
             .build()
 
     fun current(): Ability =
@@ -82,5 +62,8 @@ class FitBot(
         val data = GoogleSheetsHandler(googleCredentials).summaryChart()
         val bytes =  ChartHandler().summaryChart(data)
         return Pair("Summary", ByteArrayInputStream(bytes))
+
+    private fun log(userId: Int): String {
+
     }
 }
