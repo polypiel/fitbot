@@ -80,7 +80,7 @@ class FitBot(
 
     private fun log(arguments: List<String>, userId: Int): String {
         return if (arguments.isEmpty()) {
-            "You should add your weight. Example\n: \\log 80.5"
+            "You should add your weight. Example:\n\\log 80.5"
         } else {
             "Do you want to log ${arguments[0]} on 11/10"
         }
