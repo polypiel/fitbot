@@ -7,6 +7,9 @@ import org.telegram.abilitybots.api.objects.Privacy
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto
 import java.io.ByteArrayInputStream
 import java.io.InputStream
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton
 
 
 class FitBot(
@@ -30,6 +33,23 @@ class FitBot(
             }
             .build()
 
+    fun log(): Ability =
+        Ability
+            .builder()
+            .name("log")
+            .info("Adds measures (experimental)")
+            .locality(Locality.ALL)
+            .privacy(Privacy.PUBLIC)
+            .action { ctx ->
+                val sm = SendMessage(ctx.chatId()!!, log(ctx.arguments().toList(), ctx.user().id))
+                val ikb = InlineKeyboardButton("Ok")
+                ikb.callbackData = ctx.user().id.toString()
+                val ikm = InlineKeyboardMarkup()
+                ikm.keyboard = listOf(listOf(ikb))
+                sm.replyMarkup = ikm
+            }
+            .build()
+
     fun current(): Ability =
         Ability.builder()
             .name("current")
@@ -44,9 +64,6 @@ class FitBot(
             }
             .build()
 
-    private fun doCurrent(userId: Int): String {
-        return GoogleSheetsHandler(googleCredentials).current(userId)
-    }
 
     private fun doCurrentChart(userId: Int): Pair<String, InputStream> {
         val data = GoogleSheetsHandler(googleCredentials).currentChart(userId)
@@ -54,16 +71,18 @@ class FitBot(
         return Pair(data.toString(), ByteArrayInputStream(bytes))
     }
 
-    private fun doSummary(): String {
-        return GoogleSheetsHandler(googleCredentials).summary()
-    }
-
     private fun doSummaryChart(): Pair<String, InputStream> {
         val data = GoogleSheetsHandler(googleCredentials).summaryChart()
-        val bytes =  ChartHandler().summaryChart(data)
+        val bytes = ChartHandler().summaryChart(data)
         return Pair("Summary", ByteArrayInputStream(bytes))
+    }
 
-    private fun log(userId: Int): String {
+    private fun log(arguments: List<String>, userId: Int): String {
+        return if (arguments.isEmpty()) {
+            "You should add your weight. Example\n: \\log 80.5"
+        } else {
+            "Do you want to log ${arguments[0]} on 11/10"
+        }
 
     }
 }
