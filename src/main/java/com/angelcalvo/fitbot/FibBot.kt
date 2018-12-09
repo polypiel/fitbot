@@ -47,6 +47,7 @@ class FitBot(
                 val ikm = InlineKeyboardMarkup()
                 ikm.keyboard = listOf(listOf(ikb))
                 sm.replyMarkup = ikm
+                sender.execute(sm)
             }
             .build()
 
