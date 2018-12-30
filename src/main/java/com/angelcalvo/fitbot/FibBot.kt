@@ -65,7 +65,6 @@ class FitBot(
             }
             .build()
 
-
     private fun doCurrentChart(userId: Int): Pair<String, InputStream> {
         val data = GoogleSheetsHandler(googleCredentials).currentChart(userId)
         val bytes =  ChartHandler().curerntChart(data)
