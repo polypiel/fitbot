@@ -10,6 +10,8 @@ import java.io.InputStream
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 
 class FitBot(
@@ -78,11 +80,25 @@ class FitBot(
     }
 
     private fun log(arguments: List<String>, userId: Int): String {
-        return if (arguments.isEmpty()) {
-            "You should add your weight. Example:\n\\log 80.5"
-        } else {
-            "Do you want to log ${arguments[0]} on 11/10"
+        if (!checkLogParams(arguments)) {
+            return """Usage: \\log <what> <value>
+                |Where <what> is one of neck, shoulders, breast, biceps, waist, thigh, calf or weight""".trimMargin()
         }
-
+        val what = arguments[0]
+        val value = arguments[1].toFloat()
+        val current = LocalDateTime.now()
+        val date = current.format(FORMAT)
+        return "Do you want to log $value in $what on $date?"
     }
+
+    private fun checkLogParams(arguments: List<String>): Boolean =
+        arguments.size == 2
+            && PARTS.contains(arguments[0])
+            && arguments[1].toFloatOrNull() != null
+
+    companion object {
+        val PARTS = listOf("Neck", "Shoulders", "Breast", "Biceps", "Waist", "Thigh", "Calf", "Weight")
+        val FORMAT = DateTimeFormatter.ofPattern("dd/MM/yyyy")
+    }
+
 }
