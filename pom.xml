@@ -9,7 +9,7 @@
 	<version>1.1-SNAPSHOT</version>
 
 	<properties>
-		<kotlin.version>1.3.10</kotlin.version>
+		<kotlin.version>1.3.11</kotlin.version>
 		<google-client.version>1.27.0</google-client.version>
 	</properties>
 
@@ -18,7 +18,7 @@
 			<dependency>
 				<groupId>com.fasterxml.jackson.core</groupId>
 				<artifactId>jackson-core</artifactId>
-				<version>2.9.7</version>
+				<version>2.9.8</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
