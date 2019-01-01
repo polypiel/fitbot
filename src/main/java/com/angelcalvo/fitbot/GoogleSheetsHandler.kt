@@ -56,7 +56,7 @@ class GoogleSheetsHandler(private val credentialsJson: String) {
         }
 
         val userName = USER_MAPPING[userId]
-        val range = "$userName!A115:L116"
+        val range = "$userName!$SUMMARY_RANGE"
 
         val response = sheets().spreadsheets().values()
             .get(SHEET_ID, range)
@@ -78,7 +78,7 @@ class GoogleSheetsHandler(private val credentialsJson: String) {
         }
 
         val userName = USER_MAPPING[userId]
-        val range = "$userName!A115:L116"
+        val range = "$userName!$SUMMARY_RANGE"
 
         val response = sheets().spreadsheets().values()
             .get(SHEET_ID, range)
@@ -121,7 +121,7 @@ class GoogleSheetsHandler(private val credentialsJson: String) {
     fun summary(): String {
         val response = sheets().spreadsheets().values()
             .batchGet(SHEET_ID)
-            .setRanges(USER_MAPPING.values.map { "$it!K116:L116" })
+            .setRanges(USER_MAPPING.values.map { "$it!$CURRENT_FFMI_RANGE" })
             .execute()
         val values = response.valueRanges
             .map { it.getValues() }
@@ -138,7 +138,7 @@ class GoogleSheetsHandler(private val credentialsJson: String) {
     fun summaryChart(): SummaryData {
         val response = sheets().spreadsheets().values()
             .batchGet(SHEET_ID)
-            .setRanges(USER_MAPPING.values.map { "$it!K116:L116" })
+            .setRanges(USER_MAPPING.values.map { "$it!$CURRENT_FFMI_RANGE" })
             .execute()
         val values = response.valueRanges
             .asSequence()
@@ -187,5 +187,7 @@ class GoogleSheetsHandler(private val credentialsJson: String) {
             198764045 to "Aaron"
         )
         val CM_PATTERN =  """-?([\d.]+)(?:cm|kg|%)?""".toRegex()
+        const val SUMMARY_RANGE = "A115:L116"
+        const val CURRENT_FFMI_RANGE = "K116:L116"
     }
 }

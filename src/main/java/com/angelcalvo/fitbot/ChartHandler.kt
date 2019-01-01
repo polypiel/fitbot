@@ -11,8 +11,8 @@ class ChartHandler {
     fun summaryChart(data: SummaryData): ByteArray {
         // Create Chart
         val chart = CategoryChartBuilder()
-            .width(400)
-            .height(200)
+            .width(WIDTH)
+            .height(HEIGHT_2X)
             .theme(Styler.ChartTheme.Matlab)
             .title("FFMI")
             .build()
@@ -27,16 +27,13 @@ class ChartHandler {
         // Series
         chart.addSeries("FFMI", data.names, data.ffmiValues)
 
-        //val temp = Files.createTempFile("summary", ".png")
-        //BitmapEncoder.saveBitmap(chart, temp.toAbsolutePath().toString(), BitmapEncoder.BitmapFormat.PNG)
-
         return BitmapEncoder.getBitmapBytes(chart, BitmapEncoder.BitmapFormat.PNG)
     }
 
     fun curerntChart(data: CurrentData): ByteArray {
         val chart = RadarChartBuilder()
-            .width(400)
-            .height(400)
+            .width(WIDTH)
+            .height(HEIGHT)
             .theme(Styler.ChartTheme.Matlab)
             .title("${data.name} ${data.date}")
             .build()
@@ -48,11 +45,14 @@ class ChartHandler {
 
 
         val values = data.diff.values().map { it ?: 0.0 }.map { Math.max(30 - it, 0.0) / 30.0 }
-        chart.addSeries("hola", values.toDoubleArray())
-
-        //val temp = Files.createTempFile("current", ".png")
-        //BitmapEncoder.saveBitmap(chart, temp.toAbsolutePath().toString(), BitmapEncoder.BitmapFormat.PNG)
+        chart.addSeries("current", values.toDoubleArray())
 
         return BitmapEncoder.getBitmapBytes(chart, BitmapEncoder.BitmapFormat.PNG)
+    }
+
+    companion object {
+        const val WIDTH = 400
+        const val HEIGHT = 200
+        const val HEIGHT_2X = 400
     }
 }
